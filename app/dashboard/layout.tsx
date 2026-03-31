@@ -9,14 +9,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!user) redirect('/auth/login')
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg)' }}>
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden" style={{ background: 'var(--bg)' }}>
       <Sidebar />
-      <main className="flex-1 overflow-y-auto relative">
+      <main className="flex-1 overflow-y-auto relative w-full">
         {/* Warm ambient top wash */}
         <div className="pointer-events-none fixed inset-0 z-0" style={{
           background: 'radial-gradient(ellipse 60% 40% at 80% 10%, rgba(244,162,97,0.05) 0%, transparent 55%)',
         }} />
-        <div className="relative z-10 max-w-4xl mx-auto px-8 py-8">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-8">
           {children}
         </div>
       </main>
