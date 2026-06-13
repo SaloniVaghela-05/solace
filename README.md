@@ -28,7 +28,7 @@ Life Dashboard helps users stay organized, manage time effectively, and make con
 
 1. Clone the repository  
 
-git clone https://github.com/your-username/solace.git
+git clone https://github.com/SaloniVaghela-05/solace.git
 
 
 2. Navigate to project folder  
