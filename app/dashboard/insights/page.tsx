@@ -68,8 +68,8 @@ export default function InsightsPage() {
     const newInsights: any[] = []
 
     // Task insight
-    const overdue = tasks?.filter(t => t.status === 'pending' && t.due_date && t.due_date < today).length || 0
-    const completed = tasks?.filter(t => t.status === 'completed').length || 0
+    const overdue = tasks?.filter((t: { status: string; due_date?: string }) => t.status === 'pending' && t.due_date && t.due_date < today).length || 0
+    const completed = tasks?.filter((t: { status: string }) => t.status === 'completed').length || 0
     const total = tasks?.length || 0
     if (total > 0) {
       newInsights.push({

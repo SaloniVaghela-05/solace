@@ -65,6 +65,41 @@ body {
 
 h1, h2, h3 { letter-spacing: -0.01em; }
 
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+.bg-success-soft { background: #e8f0e0; }
+.bg-danger-soft { background: #fae8e4; }
+.bg-accent-soft { background: var(--accent-light); }
+
 /* Raked sand dot pattern */
 .sand-pattern {
   background-image: radial-gradient(#e6ddd0 1px, transparent 1px);

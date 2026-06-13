@@ -1,10 +1,12 @@
+const path = require('path')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
+  },
+  turbopack: {
+    root: path.join(__dirname),
   },
 }
 

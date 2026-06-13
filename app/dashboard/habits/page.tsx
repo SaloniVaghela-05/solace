@@ -2,20 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import type { Habit, HabitLog } from '@/lib/types/database'
+import PageHeader from '@/components/PageHeader'
 import { Plus, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-interface Habit {
-  id: string
-  name: string
-  description: string
-  frequency: string
-  target_count: number
-  streak: number
-  completedToday?: boolean
-}
-
 const HABIT_EMOJIS = ['🧘', '📚', '💧', '🏃', '🌱', '✍️', '🎵', '🛏️', '🥗', '☀️']
+const RING_C = 125.6
+const HABIT_RING_C = 100.5
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState<Habit[]>([])
@@ -28,13 +22,24 @@ export default function HabitsPage() {
 
   const fetchHabits = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const [{ data: habitsData }, { data: logs }] = await Promise.all([
+    if (!user) {
+      setLoading(false)
+      return
+    }
+
+    const [{ data: habitsData, error: habitsError }, { data: logs, error: logsError }] = await Promise.all([
       supabase.from('habits').select('*').eq('user_id', user.id).eq('is_active', true).order('created_at'),
       supabase.from('habit_logs').select('habit_id').eq('user_id', user.id).eq('completed_date', today),
     ])
-    const completedIds = new Set((logs || []).map((l: any) => l.habit_id))
-    setHabits((habitsData || []).map((h: any) => ({ ...h, completedToday: completedIds.has(h.id) })))
+
+    if (habitsError || logsError) {
+      toast.error('Could not load habits')
+      setLoading(false)
+      return
+    }
+
+    const completedIds = new Set((logs || []).map((l: HabitLog) => l.habit_id))
+    setHabits((habitsData || []).map((h: Habit) => ({ ...h, completedToday: completedIds.has(h.id) })))
     setLoading(false)
   }, [supabase, today])
 
@@ -43,14 +48,20 @@ export default function HabitsPage() {
   const toggleHabit = async (habit: Habit) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
+
     setToggling(prev => new Set([...prev, habit.id]))
-    if (habit.completedToday) {
-      await supabase.from('habit_logs').delete()
-        .eq('habit_id', habit.id).eq('user_id', user.id).eq('completed_date', today)
-    } else {
-      await supabase.from('habit_logs').insert({ habit_id: habit.id, user_id: user.id, completed_date: today })
+
+    const { error } = habit.completedToday
+      ? await supabase.from('habit_logs').delete()
+          .eq('habit_id', habit.id).eq('user_id', user.id).eq('completed_date', today)
+      : await supabase.from('habit_logs').insert({ habit_id: habit.id, user_id: user.id, completed_date: today })
+
+    if (error) {
+      toast.error('Could not update habit')
+    } else if (!habit.completedToday) {
       toast.success('Habit tended 🌱')
     }
+
     setTimeout(() => {
       setToggling(prev => { const n = new Set(prev); n.delete(habit.id); return n })
       fetchHabits()
@@ -59,8 +70,22 @@ export default function HabitsPage() {
 
   const addHabit = async () => {
     if (!form.name.trim()) { toast.error('Name required'); return }
+
     const { data: { user } } = await supabase.auth.getUser()
-    await supabase.from('habits').insert({ ...form, user_id: user!.id, is_active: true, streak: 0 })
+    if (!user) { toast.error('Please sign in again'); return }
+
+    const { error } = await supabase.from('habits').insert({
+      ...form,
+      user_id: user.id,
+      is_active: true,
+      streak: 0,
+    })
+
+    if (error) {
+      toast.error('Could not create habit')
+      return
+    }
+
     toast.success('New habit planted 🌿')
     setShowAdd(false)
     setForm({ name: '', description: '', frequency: 'daily', target_count: 1 })
@@ -68,7 +93,11 @@ export default function HabitsPage() {
   }
 
   const deleteHabit = async (id: string) => {
-    await supabase.from('habits').update({ is_active: false }).eq('id', id)
+    const { error } = await supabase.from('habits').update({ is_active: false }).eq('id', id)
+    if (error) {
+      toast.error('Could not remove habit')
+      return
+    }
     toast.success('Habit removed')
     fetchHabits()
   }
@@ -76,32 +105,12 @@ export default function HabitsPage() {
   const doneTodayCount = habits.filter(h => h.completedToday).length
   const totalCount = habits.length
   const pct = totalCount > 0 ? Math.round((doneTodayCount / totalCount) * 100) : 0
-  // SVG ring for summary circle: r=20, circumference ≈ 125.6
-  const RING_C = 125.6
   const summaryOffset = RING_C - (pct / 100) * RING_C
 
   return (
     <div className="space-y-7 pb-8">
-
-      {/* ── Header & Daily Summary ── */}
-      <header className="animate-in stagger-1">
-        <h1 className="text-3xl font-light tracking-tight" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-          Life Dashboard
-        </h1>
-        <p className="text-sm italic mt-0.5" style={{ color: 'var(--text-muted)' }}>
-          &quot;One step at a time.&quot;
-        </p>
-
-        {/* Summary card */}
-        <div
-          className="mt-5 p-4 flex justify-between items-center"
-          style={{
-            background: 'rgba(255,255,255,0.40)',
-            backdropFilter: 'blur(12px)',
-            borderRadius: '1.25rem',
-            border: '1px solid rgba(255,255,255,0.50)',
-          }}
-        >
+      <PageHeader title="Habits" quote="One step at a time.">
+        <div className="summary-card mt-5 p-4 flex justify-between items-center">
           <div>
             <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--accent)' }}>
               Today&apos;s Focus
@@ -110,13 +119,11 @@ export default function HabitsPage() {
               {doneTodayCount} of {totalCount} Completed
             </p>
           </div>
-
-          {/* Circular progress */}
           <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
-            <svg className="w-full h-full" style={{ transform: 'rotate(-90deg)' }}>
-              <circle cx="24" cy="24" r="20" fill="transparent"
-                stroke="var(--border)" strokeWidth="4" />
-              <circle cx="24" cy="24" r="20" fill="transparent"
+            <svg className="w-full h-full" style={{ transform: 'rotate(-90deg)' }} aria-hidden>
+              <circle cx="24" cy="24" r="20" fill="transparent" stroke="var(--border)" strokeWidth="4" />
+              <circle
+                cx="24" cy="24" r="20" fill="transparent"
                 stroke="var(--accent)" strokeWidth="4"
                 strokeDasharray={RING_C}
                 strokeDashoffset={summaryOffset}
@@ -127,12 +134,11 @@ export default function HabitsPage() {
             <span className="absolute text-[9px] font-bold" style={{ color: 'var(--accent)' }}>{pct}%</span>
           </div>
         </div>
-      </header>
+      </PageHeader>
 
-      {/* ── Habit List ── */}
       <section className="space-y-3 animate-in stagger-2">
         {loading && (
-          <div className="text-center py-10">
+          <div className="glass-card text-center py-10">
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Loading your habits…</p>
           </div>
         )}
@@ -156,52 +162,50 @@ export default function HabitsPage() {
           const emoji = HABIT_EMOJIS[i % HABIT_EMOJIS.length]
           const done = habit.completedToday
           const isToggling = toggling.has(habit.id)
-          // per-habit ring: r=16, c≈100.5
-          const HABIT_C = 100.5
-          const habitOffset = done ? 0 : HABIT_C
+          const habitOffset = done ? 0 : HABIT_RING_C
 
           return (
             <div
               key={habit.id}
+              role="button"
+              tabIndex={0}
               className="group flex items-center justify-between p-4 cursor-pointer transition-all duration-200"
               style={{
                 background: done ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.70)',
                 backdropFilter: 'blur(6px)',
-                borderRadius: '1.25rem',
+                borderRadius: 'var(--radius-lg)',
                 border: done ? '1px solid var(--accent-warm)' : '1px solid rgba(255,255,255,0.90)',
-                boxShadow: 'var(--shadow-warm)',
+                boxShadow: 'var(--shadow-sm)',
               }}
               onClick={() => !isToggling && toggleHabit(habit)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); !isToggling && toggleHabit(habit) } }}
             >
               <div className="flex items-center gap-4">
-                {/* Circular ring with emoji */}
-                <div
-                  className="relative shrink-0"
-                  style={{ width: 44, height: 44 }}
-                >
-                  <svg className="w-full h-full" style={{ transform: 'rotate(-90deg)' }}>
-                    <circle cx="22" cy="22" r="16" fill="transparent"
-                      stroke="var(--border)" strokeWidth="3" />
-                    <circle cx="22" cy="22" r="16" fill="transparent"
+                <div className="relative shrink-0" style={{ width: 44, height: 44 }}>
+                  <svg className="w-full h-full" style={{ transform: 'rotate(-90deg)' }} aria-hidden>
+                    <circle cx="22" cy="22" r="16" fill="transparent" stroke="var(--border)" strokeWidth="3" />
+                    <circle
+                      cx="22" cy="22" r="16" fill="transparent"
                       stroke="var(--accent)" strokeWidth="3"
-                      strokeDasharray={HABIT_C}
-                      strokeDashoffset={isToggling ? HABIT_C / 2 : habitOffset}
+                      strokeDasharray={HABIT_RING_C}
+                      strokeDashoffset={isToggling ? HABIT_RING_C / 2 : habitOffset}
                       strokeLinecap="round"
                       style={{ transition: 'stroke-dashoffset 0.5s cubic-bezier(0.22,1,0.36,1)' }}
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     {done
-                      ? <div
+                      ? (
+                        <div
                           className="w-5 h-5 rounded-full flex items-center justify-center"
                           style={{ background: 'var(--accent-light)', animation: isToggling ? 'popSuccess 0.4s cubic-bezier(0.175,0.885,0.32,1.275)' : 'none' }}
                         >
-                          <svg className="w-3 h-3" fill="none" stroke="var(--accent)" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3" fill="none" stroke="var(--accent)" viewBox="0 0 24 24" aria-hidden>
                             <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
                           </svg>
                         </div>
-                      : <span className="text-sm">{emoji}</span>
-                    }
+                      )
+                      : <span className="text-sm">{emoji}</span>}
                   </div>
                 </div>
 
@@ -210,22 +214,23 @@ export default function HabitsPage() {
                     {habit.name}
                   </h3>
                   <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    {habit.description || habit.frequency} {habit.streak > 0 && `• 🔥 ${habit.streak} day streak`}
+                    {habit.description || habit.frequency}
+                    {habit.streak > 0 && ` • 🔥 ${habit.streak} day streak`}
                   </p>
                 </div>
               </div>
 
-              {/* Done indicator / trash */}
               <div className="flex items-center gap-2">
                 {done && (
-                  <svg className="w-5 h-5" fill="none" stroke="var(--accent)" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="var(--accent)" viewBox="0 0 24 24" aria-hidden>
                     <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
                   </svg>
                 )}
                 <button
+                  type="button"
+                  aria-label={`Remove ${habit.name}`}
                   onClick={(e) => { e.stopPropagation(); deleteHabit(habit.id) }}
-                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-full transition-all"
-                  style={{ color: 'var(--danger)' }}
+                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-full transition-all text-danger"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -235,7 +240,6 @@ export default function HabitsPage() {
         })}
       </section>
 
-      {/* ── Add Habit Form ── */}
       {showAdd && (
         <div className="glass-card p-5 animate-in">
           <h3 className="font-semibold mb-4" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
@@ -251,28 +255,16 @@ export default function HabitsPage() {
               <option value="weekly">Weekly</option>
             </select>
             <div className="flex gap-2">
-              <button onClick={addHabit} className="btn btn-primary">Plant Habit 🌱</button>
-              <button onClick={() => setShowAdd(false)} className="btn btn-ghost">Cancel</button>
+              <button type="button" onClick={addHabit} className="btn btn-primary">Plant Habit 🌱</button>
+              <button type="button" onClick={() => setShowAdd(false)} className="btn btn-ghost">Cancel</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── FAB ── */}
-      {!showAdd && (
+      {!showAdd && habits.length > 0 && (
         <div className="flex justify-center pt-2 animate-in stagger-4">
-          <button
-            onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 px-8 py-4 font-semibold rounded-2xl text-white transition-all"
-            style={{
-              background: 'var(--accent)',
-              boxShadow: '0 6px 24px rgba(198,123,92,0.35)',
-              transform: 'translateY(0)',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={e => { const el = e.currentTarget; el.style.transform = 'translateY(-2px)'; el.style.boxShadow = '0 10px 30px rgba(198,123,92,0.40)' }}
-            onMouseLeave={e => { const el = e.currentTarget; el.style.transform = 'translateY(0)'; el.style.boxShadow = '0 6px 24px rgba(198,123,92,0.35)' }}
-          >
+          <button type="button" onClick={() => setShowAdd(true)} className="btn btn-primary px-8 py-4 rounded-2xl text-base">
             <Plus className="w-5 h-5" />
             Add New Habit
           </button>
