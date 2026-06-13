@@ -21,7 +21,10 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } },
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
       if (error) throw error
       toast.success('Account created! Please check your email for verification.')
@@ -108,7 +111,7 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="[EMAIL_ADDRESS]"
+              placeholder="you@example.com"
             />
           </div>
           <div>

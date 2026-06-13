@@ -162,7 +162,12 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Password</label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Password</label>
+                <Link href="/auth/forgot-password" className="text-xs hover:underline" style={{ color: 'var(--accent)' }}>
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <input className="input pr-10" type={showPassword ? 'text' : 'password'} required
                   value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" />
