@@ -1,10 +1,11 @@
 # 🌿 Solace
 
-Solace is a personal productivity web application that helps users organize their daily life in one simple and intuitive workspace.  
+Solace is a personal productivity web application that helps users organize their daily lives in one simple and intuitive workspace.  
 It combines task management, habit tracking, and financial monitoring into a single dashboard to improve focus, consistency, and productivity.
 
 ## 🚀 Live Demo
 https://solace.salonii.me
+
 ## ✨ Features
 
 - ✅ Task Management – Add, update, and track daily tasks  
@@ -21,17 +22,17 @@ Life Dashboard helps users stay organized, manage time effectively, and make con
 ## 🛠️ Tech Stack
 
 - Frontend: React / Next.js  
-- Styling: CSS / Tailwind (update if different)  
+- Styling: CSS / Tailwind
 - Deployment: Vercel  
 
 ## 📦 Installation
 
 1. Clone the repository  
 
-git clone https://github.com/your-username/solace.git
+git clone https://github.com/SaloniVaghela-05/solace.git
 
 
-2. Navigate to project folder  
+2. Navigate to the project folder  
 
 cd solace  
 
