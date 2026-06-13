@@ -9,15 +9,15 @@ import toast from 'react-hot-toast'
 import { Menu, X } from 'lucide-react'
 
 const navItems = [
-  { href: '/dashboard',               label: 'Overview',      emoji: '📂' },
-  { href: '/dashboard/tasks',         label: 'Tasks',         emoji: '☑️' },
-  { href: '/dashboard/habits',        label: 'Habits',        emoji: '📈' },
-  { href: '/dashboard/finance',       label: 'Finance',       emoji: '💰' },
-  { href: '/dashboard/goals',         label: 'Goals',         emoji: '🎯' },
-  { href: '/dashboard/journal',       label: 'Journal',       emoji: '📖' },
+  { href: '/dashboard', label: 'Overview', emoji: '📂' },
+  { href: '/dashboard/tasks', label: 'Tasks', emoji: '☑️' },
+  { href: '/dashboard/habits', label: 'Habits', emoji: '📈' },
+  { href: '/dashboard/finance', label: 'Finance', emoji: '💰' },
+  { href: '/dashboard/goals', label: 'Goals', emoji: '🎯' },
+  { href: '/dashboard/journal', label: 'Journal', emoji: '📖' },
   { href: '/dashboard/subscriptions', label: 'Subscriptions', emoji: '💳' },
-  { href: '/dashboard/insights',      label: 'Insights',      emoji: '✨' },
-  { href: '/dashboard/about',         label: 'About',         emoji: '👋' },
+  { href: '/dashboard/insights', label: 'Insights', emoji: '✨' },
+  { href: '/dashboard/about', label: 'About', emoji: '👋' },
 ]
 
 // Extracted inner content to avoid repeating it for both desktop and mobile views
@@ -40,10 +40,10 @@ function SidebarContent({ pathname, handleLogout, onLinkClick }: { pathname: str
             className="text-sm font-bold leading-none"
             style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
           >
-            Life Dashboard
+            Solace
           </p>
           <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-            your calm space
+            Curated for Clarity, Designed for Calm
           </p>
         </div>
       </div>
@@ -63,15 +63,15 @@ function SidebarContent({ pathname, handleLogout, onLinkClick }: { pathname: str
               style={
                 isActive
                   ? {
-                      background: 'var(--accent-light)',
-                      color: 'var(--accent)',
-                      fontWeight: 600,
-                      border: '1px solid var(--accent-warm)',
-                    }
+                    background: 'var(--accent-light)',
+                    color: 'var(--accent)',
+                    fontWeight: 600,
+                    border: '1px solid var(--accent-warm)',
+                  }
                   : {
-                      color: 'var(--text-secondary)',
-                      border: '1px solid transparent',
-                    }
+                    color: 'var(--text-secondary)',
+                    border: '1px solid transparent',
+                  }
               }
               onMouseEnter={(e) => {
                 if (!isActive) {
@@ -153,23 +153,23 @@ export default function Sidebar() {
   return (
     <>
       {/* 1. Mobile Header (Only visible on small screens) */}
-      <header 
-        className="md:hidden flex items-center justify-between px-5 pl-4 py-3 sticky top-0 z-30 shrink-0" 
-        style={{ 
-          background: 'rgba(255,255,255,0.7)', 
-          backdropFilter: 'blur(12px)', 
-          borderBottom: '1px solid var(--border-light)' 
+      <header
+        className="md:hidden flex items-center justify-between px-5 pl-4 py-3 sticky top-0 z-30 shrink-0"
+        style={{
+          background: 'rgba(255,255,255,0.7)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid var(--border-light)'
         }}
       >
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
-            ☀️
+            🌻
           </div>
           <p className="font-bold text-[15px] leading-none" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-            Life Dashboard
+            Solace
           </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsOpen(true)}
           className="p-1.5 rounded-lg active:scale-95 transition-transform"
           style={{ background: 'var(--surface-2)', color: 'var(--text-primary)' }}
@@ -182,31 +182,31 @@ export default function Sidebar() {
       {isOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           {/* Dark backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity" 
-            onClick={() => setIsOpen(false)} 
+          <div
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsOpen(false)}
           />
-          
+
           {/* Sliding panel */}
-          <aside 
+          <aside
             className="w-[260px] h-full relative flex flex-col shadow-2xl animate-in slide-in-from-left-full duration-300"
-            style={{ 
-              background: 'var(--bg)', 
-              borderRight: '1px solid var(--border-light)' 
+            style={{
+              background: 'var(--bg)',
+              borderRight: '1px solid var(--border-light)'
             }}
           >
-            <button 
-              onClick={() => setIsOpen(false)} 
+            <button
+              onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 p-2 rounded-full z-10 hover:bg-black/5 active:scale-95 transition-all"
               style={{ color: 'var(--text-secondary)' }}
             >
               <X size={20} />
             </button>
-            
-            <SidebarContent 
-              pathname={pathname} 
-              handleLogout={handleLogout} 
-              onLinkClick={() => setIsOpen(false)} 
+
+            <SidebarContent
+              pathname={pathname}
+              handleLogout={handleLogout}
+              onLinkClick={() => setIsOpen(false)}
             />
           </aside>
         </div>

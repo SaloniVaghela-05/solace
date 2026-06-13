@@ -24,7 +24,7 @@ export default function SignupPage() {
         options: { data: { full_name: fullName } },
       })
       if (error) throw error
-      toast.success('Account created! 🌱 Check your email.')
+      toast.success('Account created! Please check your email for verification.')
       router.push('/auth/login')
     } catch (error: any) {
       toast.error(error.message)
@@ -68,7 +68,7 @@ export default function SignupPage() {
             className="font-semibold text-lg"
             style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
           >
-            Life Dashboard
+            Solace
           </span>
         </div>
 
@@ -77,10 +77,10 @@ export default function SignupPage() {
             className="text-2xl font-semibold"
             style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
           >
-            Plant your first seed 🌱
+            Welcome to Solace 🌻
           </h2>
           <p className="text-sm mt-1.5" style={{ color: 'var(--text-muted)' }}>
-            Create your account and start your journey
+            Cultivate clarity and calm
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="[EMAIL_ADDRESS]"
             />
           </div>
           <div>
@@ -132,7 +132,7 @@ export default function SignupPage() {
             className="btn btn-primary w-full justify-center py-2.5 mt-2"
             style={{ borderRadius: '10px', fontSize: '0.9rem' }}
           >
-            {loading ? 'Creating…' : 'Start growing 🌿'}
+            {loading ? 'Creating…' : 'Let’s begin'}
           </button>
         </form>
 
@@ -147,7 +147,7 @@ export default function SignupPage() {
           className="mt-10 text-center text-xs italic"
           style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-display)' }}
         >
-          "The best time to plant a tree was 20 years ago.<br />The second best time is now."
+          “The journey of a thousand miles begins with a single step.”
         </p>
       </div>
     </div>

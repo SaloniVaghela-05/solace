@@ -1,11 +1,10 @@
-# 🌿 Life Dashboard
+# 🌿 Solace
 
-Life Dashboard is a personal productivity web application that helps users organize their daily life in one simple and intuitive workspace.  
+Solace is a personal productivity web application that helps users organize their daily life in one simple and intuitive workspace.  
 It combines task management, habit tracking, and financial monitoring into a single dashboard to improve focus, consistency, and productivity.
 
 ## 🚀 Live Demo
-https://life-dashboard-delta-olive.vercel.app/
-
+https://solace.salonii.me
 ## ✨ Features
 
 - ✅ Task Management – Add, update, and track daily tasks  
@@ -29,12 +28,12 @@ Life Dashboard helps users stay organized, manage time effectively, and make con
 
 1. Clone the repository  
 
-git clone https://github.com/your-username/life-dashboard.git
+git clone https://github.com/your-username/solace.git
 
 
 2. Navigate to project folder  
 
-cd life-dashboard
+cd solace  
 
 
 3. Install dependencies  

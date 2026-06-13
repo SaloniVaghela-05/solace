@@ -1,4 +1,4 @@
-# Life Dashboard — Setup Guide
+# Solace — Setup Guide
 
 ## Step 1: Fix Your Supabase Database
 
@@ -58,7 +58,7 @@ Open http://localhost:3000 — you'll be redirected to login.
 ## File Structure
 
 ```
-life-dashboard/
+solace/
 ├── app/
 │   ├── globals.css
 │   ├── layout.tsx

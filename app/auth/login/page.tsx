@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-      toast.success('Welcome back ☀️')
+      toast.success('Welcome back 🌻')
       router.push('/dashboard')
       router.refresh()
     } catch (error: any) {
@@ -100,10 +100,10 @@ export default function LoginPage() {
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg"
               style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.25)' }}>
-              ☀️
+              🌻
             </div>
             <span className="font-bold text-white" style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem' }}>
-              Life Dashboard
+              Solace
             </span>
           </div>
 
@@ -113,8 +113,8 @@ export default function LoginPage() {
               className="text-4xl font-normal text-white leading-snug mb-5"
               style={{ fontFamily: 'var(--font-display)', textShadow: '0 2px 20px rgba(80,20,0,0.30)' }}
             >
-              Tend your life<br />
-              <span style={{ color: 'rgba(255,240,180,0.95)' }}>like a garden.</span>
+              Where intention meets action.<br />
+              <span style={{ color: 'rgba(255,240,180,0.95)' }}>Grow towards a better you.</span>
             </h1>
             <p style={{ color: 'rgba(255,220,170,0.75)', lineHeight: '1.75', maxWidth: '340px', fontSize: '0.95rem' }}>
               Track what matters, grow your habits, and find clarity in the warmth of your own data.

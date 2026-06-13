@@ -5,10 +5,10 @@ export default function AboutPage() {
     <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="mb-10">
         <h1 className="text-3xl font-semibold mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-          About this Dashboard
+          About Solace
         </h1>
         <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-          The story behind the screen 🌿
+          About Solace
         </p>
       </header>
 
@@ -24,15 +24,15 @@ export default function AboutPage() {
           <div className="flex items-center gap-3 mb-4">
             <span className="text-2xl">✨</span>
             <h2 className="text-xl font-medium" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-              Why I Made It
+              Why I Made Solace
             </h2>
           </div>
           <div className="space-y-4 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
             <p>
-              Life Dashboard is a personal productivity platform designed to help you organize your daily life in one simple workspace. It brings together task management, habit tracking, and financial monitoring so you can focus on what truly matters.
+              Solace is a personal productivity platform designed to help you organize your daily life in one simple workspace. It brings together task management, habit tracking, and financial monitoring so you can focus on what truly matters.
             </p>
             <p>
-              Built with a minimal and intuitive approach, the platform helps reduce distractions and makes planning your day easier and more effective. Whether you are working towards academic goals, career growth, or personal improvement, Life Dashboard supports you in staying consistent and in control.
+              Built with a minimal and intuitive approach, the platform helps reduce distractions and makes planning your day easier and more effective. Whether you are working towards academic goals, career growth, or personal improvement, Solace supports you in staying consistent and in control.
             </p>
             <p>
               The goal is not just to stay busy, but to stay organized, intentional, and productive every day.

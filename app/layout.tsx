@@ -3,8 +3,8 @@ import './globals.css'
 import { Toaster } from 'react-hot-toast'
 
 export const metadata: Metadata = {
-  title: 'Life Dashboard',
-  description: 'Your personal life management sanctuary',
+  title: 'Solace',
+  description: 'Curated for Clarity, Designed for Calm',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               padding: '10px 14px',
             },
             success: { iconTheme: { primary: '#c67b5c', secondary: '#fdf8f5' } },
-            error:   { iconTheme: { primary: '#a84040', secondary: '#fdf8f5' } },
+            error: { iconTheme: { primary: '#a84040', secondary: '#fdf8f5' } },
           }}
         />
       </body>
