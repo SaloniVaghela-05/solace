@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Plus, Target, CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -16,6 +16,14 @@ export default function GoalsPage() {
   const [form, setForm] = useState({ title: '', description: '', category: 'Personal', target_date: '', progress: 0 })
   const [milestoneForm, setMilestoneForm] = useState({ title: '', description: '' })
   const supabase = createClient()
+  const debounceRefs = useRef<Record<string, NodeJS.Timeout>>({})
+
+  useEffect(() => {
+    return () => {
+      // Clean up all timeouts on unmount
+      Object.values(debounceRefs.current).forEach(clearTimeout)
+    }
+  }, [])
 
   const fetchGoals = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -57,9 +65,25 @@ export default function GoalsPage() {
     fetchGoals()
   }
 
-  const updateProgress = async (goalId: string, progress: number) => {
-    await supabase.from('goals').update({ progress }).eq('id', goalId)
-    fetchGoals()
+  const handleProgressChange = (goalId: string, progress: number) => {
+    // 1. Update local state immediately for instant feedback
+    setGoals(prev => prev.map(g => g.id === goalId ? { ...g, progress } : g))
+
+    // 2. Clear any existing timeout for this goal
+    if (debounceRefs.current[goalId]) {
+      clearTimeout(debounceRefs.current[goalId])
+    }
+
+    // 3. Set a new timeout to save to database after 500ms
+    debounceRefs.current[goalId] = setTimeout(async () => {
+      const { error } = await supabase.from('goals').update({ progress }).eq('id', goalId)
+      if (error) {
+        toast.error('Failed to update progress')
+        fetchGoals() // Revert to database state on error
+      } else {
+        fetchGoals() // Sync to verify and fetch any other changes (like database triggers)
+      }
+    }, 500)
   }
 
   const updateStatus = async (goalId: string, status: string) => {
@@ -108,7 +132,7 @@ export default function GoalsPage() {
             </div>
             <div>
               <label className="text-xs mb-1.5 block" style={{ color: 'var(--text-secondary)' }}>Starting progress: {form.progress}%</label>
-              <input type="range" min={0} max={100} value={form.progress} onChange={e => setForm({ ...form, progress: parseInt(e.target.value) })} className="w-full" />
+              <input type="range" min={0} max={100} value={form.progress} onChange={e => setForm({ ...form, progress: parseInt(e.target.value) })} className="custom-slider" />
             </div>
             <div className="flex gap-2 pt-1">
               <button onClick={addGoal} className="btn btn-primary">Save Goal</button>
@@ -169,9 +193,8 @@ export default function GoalsPage() {
                 </div>
                 <input
                   type="range" min={0} max={100} value={goal.progress}
-                  onChange={e => updateProgress(goal.id, parseInt(e.target.value))}
-                  className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-                  style={{ accentColor: 'var(--accent)' }}
+                  onChange={e => handleProgressChange(goal.id, parseInt(e.target.value))}
+                  className="custom-slider"
                 />
               </div>
 

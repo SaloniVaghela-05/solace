@@ -39,7 +39,15 @@ export default function HabitsPage() {
     }
 
     const completedIds = new Set((logs || []).map((l: HabitLog) => l.habit_id))
-    setHabits((habitsData || []).map((h: Habit) => ({ ...h, completedToday: completedIds.has(h.id) })))
+    setHabits((habitsData || []).map((h: any) => ({
+      id: h.id,
+      name: h.name,
+      description: h.description,
+      frequency: h.target_frequency || 'daily',
+      target_count: 1,
+      streak: 0,
+      completedToday: completedIds.has(h.id)
+    })))
     setLoading(false)
   }, [supabase, today])
 
@@ -75,10 +83,11 @@ export default function HabitsPage() {
     if (!user) { toast.error('Please sign in again'); return }
 
     const { error } = await supabase.from('habits').insert({
-      ...form,
+      name: form.name,
+      description: form.description,
+      target_frequency: form.frequency,
       user_id: user.id,
       is_active: true,
-      streak: 0,
     })
 
     if (error) {

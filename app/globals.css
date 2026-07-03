@@ -269,3 +269,50 @@ select.input { cursor: pointer; }
 .warm-glow {
   box-shadow: 0 0 14px 3px rgba(244,162,97,0.35);
 }
+
+/* Custom range slider styling */
+.custom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  outline: none;
+  transition: background 0.2s;
+}
+
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, background-color 0.2s;
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: var(--accent-hover);
+}
+
+.custom-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, background-color 0.2s;
+}
+
+.custom-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  background: var(--accent-hover);
+}
+
